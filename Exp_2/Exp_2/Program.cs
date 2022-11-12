@@ -76,10 +76,18 @@ namespace Exp_2
                 }
             }
         }
-
+        
         static void Main(string[] args)
         {
+            /*
+            Небольшой тест
 
+            var y = new MultiLock("1k", "2k", "3k");
+            var t1 = y.AcquireLock("4k", "5k");
+            Console.WriteLine(y.keys);
+            t1.Dispose();
+            Console.WriteLine(y.keys);
+            */
         }
     }
 }
