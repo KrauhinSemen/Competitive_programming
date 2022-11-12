@@ -11,10 +11,10 @@ namespace Exp_2
             public IDisposable AcquireLock(params string[] keys);
         }
 
-        class MultiLockStorage : IDisposable
+        public class MultiLockStorage : IDisposable
         {
-            public List<string> keys;
-            public MultiLock origin;
+            public List<string> keys;  // Местное хранилище ключей, которые нужно будет удалить при вызове Dispose
+            public MultiLock origin;  // MultiLock, из которого был вызван этот класс
             public object locker = new object();
 
             public MultiLockStorage(List<string> keys_, MultiLock origin_)
@@ -30,29 +30,29 @@ namespace Exp_2
             {
                 lock (locker)
                 {
-                    foreach (var key in keys)
+                    foreach (var key in keys)  // Удаление ключей в MultiLock
                         origin.keys.Remove(key);
                 }
             }
         }
 
-        class MultiLock : IMultiLock
+        public class MultiLock : IMultiLock
         {
-            public List<string> keys = new List<string>();
-            public object locker = new object();
+            public List<string> keys = new List<string>();  // Место хранения ключей
+            public object locker = new object();  // "Заглушка" для lock
 
             public MultiLock(params string[] keys_)
             {
                 lock (locker)
                 {
-                    foreach (var key in keys_)
+                    foreach (var key in keys_)  // Передача ключей классу
                         keys.Add(key);
                 }
             }
 
             public IDisposable AcquireLock(params string[] keys_)
             {
-                while (true)
+                while (true)  // Проверяем введёные ключи на наличие их в keys
                 {
                     lock (locker)
                     {
@@ -67,8 +67,11 @@ namespace Exp_2
                             }
                             tempStorage.Add(key);
                         }
-                        if (!wasCoincident) 
+                        if (!wasCoincident) // Есть совпадение или нет, выходим из lock и процесссор может отдать приоритет другому потоку
+                        {
+                            keys.AddRange(tempStorage);
                             return new MultiLockStorage(tempStorage, this);
+                        }
                     }
                 }
             }
