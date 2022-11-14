@@ -15,24 +15,20 @@ namespace Exp_2
         {
             public List<string> keys;  // Местное хранилище ключей, которые нужно будет удалить при вызове Dispose
             public MultiLock origin;  // MultiLock, из которого был вызван этот класс
-            public object locker = new object();
+            public Mutex mutexObject = new Mutex();
 
             public MultiLockStorage(List<string> keys_, MultiLock origin_)
             {
-                lock (locker)
-                {
-                    keys = keys_;
-                    origin = origin_;
-                }
+                keys = keys_;
+                origin = origin_;
             }
 
             public void Dispose()
             {
-                lock (locker)
-                {
-                    foreach (var key in keys)  // Удаление ключей в MultiLock
-                        origin.keys.Remove(key);
-                }
+                mutexObject.WaitOne();
+                foreach (var key in keys)  // Удаление ключей в MultiLock
+                    origin.keys.Remove(key);
+                mutexObject.ReleaseMutex();
             }
         }
 
@@ -40,42 +36,39 @@ namespace Exp_2
         {
             public List<string> keyOptions = new List<string>(); // Все доступные варианты ключа
             public List<string> keys = new List<string>();  // Место хранения ключей
-            public object locker = new object();  // "Заглушка" для lock
+            public Mutex mutexObject = new Mutex();
 
             public MultiLock(params string[] keys_)
             {
-                lock (locker)
-                {
-                    foreach (var key in keys_)  // Передача ключей классу
-                        keyOptions.Add(key);
-                }
+                foreach (var key in keys_)  // Передача ключей классу
+                    keyOptions.Add(key);
             }
 
             public IDisposable AcquireLock(params string[] keys_)
             {
                 while (true)  // Проверяем введёные ключи на наличие их в keys
                 {
-                    lock (locker)
+                    var tempStorage = new List<string>();
+                    var wasCoincident = false;
+                    mutexObject.WaitOne();
+                    foreach (var key in keys_)
                     {
-                        var tempStorage = new List<string>();
-                        var wasCoincident = false;
-                        foreach (var key in keys_)
+                        if (!keyOptions.Contains(key))
+                            throw new ArgumentException("Выход за предел доступных для блокирования ключей");
+                        if (keys.Contains(key))
                         {
-                            if (!keyOptions.Contains(key))
-                                throw new ArgumentException("Выход за предел доступных для блокирования ключей");
-                            if (keys.Contains(key))
-                            {
-                                wasCoincident = true;
-                                break;
-                            }
-                            tempStorage.Add(key);
+                            wasCoincident = true;
+                            break;
                         }
-                        if (!wasCoincident) // Есть совпадение или нет, выходим из lock и процесссор может отдать приоритет другому потоку
-                        {
-                            keys.AddRange(tempStorage);
-                            return new MultiLockStorage(tempStorage, this);
-                        }
+                        tempStorage.Add(key);
                     }
+                    if (!wasCoincident) // Есть совпадение или нет, выходим из lock и процесссор может отдать приоритет другому потоку
+                    {
+                        keys.AddRange(tempStorage);
+                        mutexObject.ReleaseMutex();
+                        return new MultiLockStorage(tempStorage, this);
+                    }
+                    mutexObject.ReleaseMutex();
                 }
             }
         }
