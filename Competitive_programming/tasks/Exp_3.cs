@@ -1,5 +1,4 @@
 using System;
-using System.Collections.Generic;
 using System.Threading;
 
 namespace Exp_3
@@ -11,37 +10,54 @@ namespace Exp_3
         int Count { get; }
     }
 
+    public class Node<T>
+    {
+        public Node<T> Next;
+        public T Value;
+    }
+
     public class ConcurrentStack<T> : IStack<T>
     {
-        public int Count => Elements.Count;  // Elements.Count вычисляется за О(1), если судить по документации
-        private readonly Stack<T> Elements;
+        public int Count => Count_; // Сложность О(1)
+        private int Count_;
+        private readonly Node<T> LastNode;
 
         public ConcurrentStack()
         {
-            Elements = new Stack<T>();
+            LastNode = new Node<T>();
+            Count_ = 0;
         }
 
         public void Push(T item)
         {
-            Monitor.Enter(Elements);
-            Elements.Push(item);
-            Monitor.Exit(Elements);
+            var node = new Node<T>() { Value = item, Next = LastNode.Next };
+            // Пока lastNode.Next будет неравен node.Next будет переприсваивание в цикле
+            while (node.Next != Interlocked.CompareExchange(ref LastNode.Next, node, node.Next))
+                node.Next = LastNode.Next;
+            Interlocked.Increment(ref Count_);
         }
 
-        public bool TryPop(out T item)
+        public bool TryPop(out T result)
         {
-            try
+            var node = LastNode.Next;
+            if (node == null)
             {
-                Monitor.Enter(Elements);
-                item = Elements.Pop();
-                Monitor.Exit(Elements);
-                return true;
-            }
-            catch (InvalidOperationException)
-            {
-                item = default(T);
+                result = default;
                 return false;
             }
+            // Аналогично Push
+            while (node != Interlocked.CompareExchange(ref LastNode.Next, node.Next, node))
+            {
+                node = LastNode.Next;
+                if (node == null)
+                {
+                    result = default;
+                    return false;
+                }
+            }
+            Interlocked.Decrement(ref Count_);
+            result = node.Value;
+            return true;
         }
     }
 
