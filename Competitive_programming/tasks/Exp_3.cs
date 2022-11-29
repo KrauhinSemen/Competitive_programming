@@ -1,7 +1,7 @@
 using System;
 using System.Threading;
 
-namespace Exp_3
+namespace Exp_3_2
 {
     public interface IStack<T>
     {
@@ -39,14 +39,10 @@ namespace Exp_3
 
         public bool TryPop(out T result)
         {
-            var node = LastNode.Next;
-            if (node == null)
-            {
-                result = default;
-                return false;
-            }
-            // Аналогично Push
-            while (node != Interlocked.CompareExchange(ref LastNode.Next, node.Next, node))
+            // Visual Studio посоветвала сделать так вместо "var node = new Node<T>()".
+            // Наверное, нарушение стиля в данном случае лучше, чем занятие программой большего объёма памяти
+            Node<T> node;
+            do
             {
                 node = LastNode.Next;
                 if (node == null)
@@ -55,6 +51,7 @@ namespace Exp_3
                     return false;
                 }
             }
+            while (node != Interlocked.CompareExchange(ref LastNode.Next, node.Next, node));
             Interlocked.Decrement(ref Count_);
             result = node.Value;
             return true;
@@ -69,7 +66,7 @@ namespace Exp_3
             var t = new ConcurrentStack<string>();
             var th1 = new Thread(() =>
             {
-                for (var i = 1; i < 100; i++) 
+                for (var i = 1; i < 100; i++)
                     t.Push(i.ToString());
             });
             var th2 = new Thread(() =>
@@ -81,8 +78,24 @@ namespace Exp_3
                     Console.WriteLine(t.TryPop(out r));
                 };
             });
+            var th3 = new Thread(() =>
+            {
+                for (var i = 1; i < 100; i++)
+                    t.Push(i.ToString());
+            });
+            var th4 = new Thread(() =>
+            {
+                var r = "0";
+                for (var i = 1; i < 120; i++)
+                {
+                    Console.WriteLine(t.Count);
+                    Console.WriteLine(t.TryPop(out r));
+                };
+            });
             th1.Start();
             th2.Start();
+            th3.Start();
+            th4.Start();
         }
     }
 }
