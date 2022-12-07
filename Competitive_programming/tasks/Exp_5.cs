@@ -7,6 +7,17 @@ using System.Threading.Tasks;
 
 namespace LogParsing.LogParsers
 {
+
+    public static class Adder
+    {
+        public static void Add(Func<string, string?> tryGetIdFromLine, List<string> storage, string line)
+        {
+            var result_line = tryGetIdFromLine(line);
+            if (result_line != null)
+                storage.Add(result_line);
+        }
+    }
+
     public class SequentialLogParser : ILogParser 
     {
         private readonly FileInfo file;
@@ -45,12 +56,7 @@ namespace LogParsing.LogParsers
             var result = new List<string>();
             foreach (var line in lines)
             {
-                var thread = new Thread(() =>
-                {
-                    var result_line = tryGetIdFromLine(line);
-                    if (result_line != null)
-                        result.Add(result_line);
-                });
+                var thread = new Thread(() => Adder.Add(tryGetIdFromLine, result, line));
                 thread.Start();
             }
             return result.ToArray();
@@ -72,12 +78,7 @@ namespace LogParsing.LogParsers
         {
             var lines = File.ReadLines(file.FullName);
             var result = new List<string>();
-            Parallel.ForEach(lines, line =>
-            {
-                var result_line = tryGetIdFromLine(line);
-                if (result_line != null)
-                    result.Add(result_line);
-            });
+            Parallel.ForEach(lines, line => Adder.Add(tryGetIdFromLine, result, line));
             return result.ToArray();
         }
     }
