@@ -39,11 +39,10 @@ namespace CustomThreadPool
                 {
                     while (true) // Бесконечный цикл взятия первой задачи из очереди и ухода потока на покой после её выполнения
                     {
-                        lock (lockers[(int)threadNumber])
-                        {
-                            works[(int)threadNumber] = null;
-                            Monitor.Wait(lockers[(int)threadNumber]); // Блокировка поктока при его создании и после завершения работы
-                        }
+                        Monitor.Enter(lockers[(int)threadNumber]);
+                        works[(int)threadNumber] = null;
+                        Monitor.Wait(lockers[(int)threadNumber]); // Блокировка поктока при его создании и после завершения работы
+                        Monitor.Exit(lockers[(int)threadNumber]);
                         works[(int)threadNumber].Invoke();
                         Interlocked.Increment(ref tasksProcessedCount);
                     }
@@ -69,10 +68,9 @@ namespace CustomThreadPool
                     Monitor.Enter(actions);
                     works[i] = actions.Dequeue();
                     Monitor.Exit(actions);
-                    lock (lockers[i])
-                    {
-                        Monitor.Pulse(lockers[i]);
-                    }
+                    Monitor.Enter(lockers[i]);
+                    Monitor.Pulse(lockers[i]);
+                    Monitor.Exit(lockers[i]);
                     Interlocked.Decrement(ref actionsCount);
                     if (actionsCount == 0)
                         break;
