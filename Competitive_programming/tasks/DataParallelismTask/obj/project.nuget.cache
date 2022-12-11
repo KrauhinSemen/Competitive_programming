@@ -1,0 +1,10 @@
+{
+  "version": 2,
+  "dgSpecHash": "RE53i6FhV5vXuHnTQaYkNTdPj3r711b/ZNybP3rEjxHmi7SAUuXI/gfcKj1GONSPTyXNKADrrdh8ZdyOaDjFCQ==",
+  "success": true,
+  "projectFilePath": "C:\\Users\\1645286\\Documents\\Competitive_programming\\Competitive_programming\\tasks\\DataParallelismTask\\DataParallelismTask.csproj",
+  "expectedPackageFiles": [
+    "C:\\Users\\1645286\\.nuget\\packages\\microsoft.netcore.app.host.win-x64\\3.1.31\\microsoft.netcore.app.host.win-x64.3.1.31.nupkg.sha512"
+  ],
+  "logs": []
+}
