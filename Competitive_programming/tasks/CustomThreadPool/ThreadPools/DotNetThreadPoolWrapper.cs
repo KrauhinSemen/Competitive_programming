@@ -24,7 +24,6 @@ namespace CustomThreadPool
     {
         private long tasksProcessedCount = 0; // Кол-во выполненых заданий
         private readonly int threadsCount; // Кол-во потоков
-        private readonly List<bool> isOccupancy = new List<bool>(); // Булевое значения занятости потока на данный момент
         private readonly List<object> lockers = new List<object>(); // Заглушки для потоков
         private readonly List<Action> works = new List<Action>(); // Биекция работа - поток
         private readonly Queue<Action> actions = new Queue<Action>(); // Очередь задач
@@ -34,7 +33,6 @@ namespace CustomThreadPool
             threadsCount = 100; // 100 - число из головы
             for (var i = 0; i < threadsCount; i++)
             {
-                isOccupancy.Add(false);
                 lockers.Add(new object());
                 works.Add(null);
                 var thread = new Thread((threadNumber) =>
@@ -43,12 +41,11 @@ namespace CustomThreadPool
                     {
                         lock (lockers[(int)threadNumber])
                         {
+                            works[(int)threadNumber] = null;
                             Monitor.Wait(lockers[(int)threadNumber]); // Блокировка поктока при его создании и после завершения работы
                         }
                         works[(int)threadNumber].Invoke();
                         Interlocked.Increment(ref tasksProcessedCount);
-                        works[(int)threadNumber] = null;
-                        isOccupancy[(int)threadNumber] = false;
                     }
                 });
                 thread.Start(i);
@@ -64,24 +61,11 @@ namespace CustomThreadPool
             {
                 actionsCount = actions.Count;
                 if (actionsCount == 0)
-                {
-                    for (var i = 0; i < threadsCount; i++)
-                    {
-                        if (isOccupancy[i] && works[i] != null)
-                        {
-                            lock (lockers[i])
-                            {
-                                Monitor.Pulse(lockers[i]); // Если каким-то обрзом "Pulse" произошёл до "Wait"
-                            }
-                        }
-                    }
                     continue;
-                }
                 for (var i = 0; i < threadsCount; i++)
                 {
-                    if (isOccupancy[i])
+                    if (works[i] != null)
                         continue;
-                    isOccupancy[i] = true;
                     Monitor.Enter(actions);
                     works[i] = actions.Dequeue();
                     Monitor.Exit(actions);

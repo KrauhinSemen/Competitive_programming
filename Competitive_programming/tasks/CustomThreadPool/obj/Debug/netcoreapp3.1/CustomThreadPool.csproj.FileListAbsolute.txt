@@ -12,3 +12,17 @@ C:\Users\1645286\Downloads\Telegram Desktop\CustomThreadPool\obj\Debug\netcoreap
 C:\Users\1645286\Downloads\Telegram Desktop\CustomThreadPool\obj\Debug\netcoreapp3.1\CustomThreadPool.dll
 C:\Users\1645286\Downloads\Telegram Desktop\CustomThreadPool\obj\Debug\netcoreapp3.1\CustomThreadPool.pdb
 C:\Users\1645286\Downloads\Telegram Desktop\CustomThreadPool\obj\Debug\netcoreapp3.1\CustomThreadPool.genruntimeconfig.cache
+C:\Users\1645286\Documents\Competitive_programming\Competitive_programming\tasks\CustomThreadPool\bin\Debug\netcoreapp3.1\CustomThreadPool.exe
+C:\Users\1645286\Documents\Competitive_programming\Competitive_programming\tasks\CustomThreadPool\bin\Debug\netcoreapp3.1\CustomThreadPool.deps.json
+C:\Users\1645286\Documents\Competitive_programming\Competitive_programming\tasks\CustomThreadPool\bin\Debug\netcoreapp3.1\CustomThreadPool.runtimeconfig.json
+C:\Users\1645286\Documents\Competitive_programming\Competitive_programming\tasks\CustomThreadPool\bin\Debug\netcoreapp3.1\CustomThreadPool.runtimeconfig.dev.json
+C:\Users\1645286\Documents\Competitive_programming\Competitive_programming\tasks\CustomThreadPool\bin\Debug\netcoreapp3.1\CustomThreadPool.dll
+C:\Users\1645286\Documents\Competitive_programming\Competitive_programming\tasks\CustomThreadPool\bin\Debug\netcoreapp3.1\CustomThreadPool.pdb
+C:\Users\1645286\Documents\Competitive_programming\Competitive_programming\tasks\CustomThreadPool\obj\Debug\netcoreapp3.1\CustomThreadPool.csproj.AssemblyReference.cache
+C:\Users\1645286\Documents\Competitive_programming\Competitive_programming\tasks\CustomThreadPool\obj\Debug\netcoreapp3.1\CustomThreadPool.GeneratedMSBuildEditorConfig.editorconfig
+C:\Users\1645286\Documents\Competitive_programming\Competitive_programming\tasks\CustomThreadPool\obj\Debug\netcoreapp3.1\CustomThreadPool.AssemblyInfoInputs.cache
+C:\Users\1645286\Documents\Competitive_programming\Competitive_programming\tasks\CustomThreadPool\obj\Debug\netcoreapp3.1\CustomThreadPool.AssemblyInfo.cs
+C:\Users\1645286\Documents\Competitive_programming\Competitive_programming\tasks\CustomThreadPool\obj\Debug\netcoreapp3.1\CustomThreadPool.csproj.CoreCompileInputs.cache
+C:\Users\1645286\Documents\Competitive_programming\Competitive_programming\tasks\CustomThreadPool\obj\Debug\netcoreapp3.1\CustomThreadPool.dll
+C:\Users\1645286\Documents\Competitive_programming\Competitive_programming\tasks\CustomThreadPool\obj\Debug\netcoreapp3.1\CustomThreadPool.pdb
+C:\Users\1645286\Documents\Competitive_programming\Competitive_programming\tasks\CustomThreadPool\obj\Debug\netcoreapp3.1\CustomThreadPool.genruntimeconfig.cache

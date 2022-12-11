@@ -1,8 +1,10 @@
 {
   "version": 2,
-  "dgSpecHash": "xFcdSJ24rhvqWFVy5LM5ECo15SNoLSh6MJWtK3/yQhQ6LbtLNE//B3n3QC52AQogpBKbE7K093F3YANCfGp8cQ==",
+  "dgSpecHash": "k8VEgszntswfLE/6Gtx1E08kkd72olgJtU/7J5DRlZX8Y66c8jE5pXibCEB8LPAhcMGjhOSK6Hew2Bg4+EfmfA==",
   "success": true,
-  "projectFilePath": "C:\\Users\\1645286\\Downloads\\Telegram Desktop\\CustomThreadPool\\CustomThreadPool.csproj",
-  "expectedPackageFiles": [],
+  "projectFilePath": "C:\\Users\\1645286\\Documents\\Competitive_programming\\Competitive_programming\\tasks\\CustomThreadPool\\CustomThreadPool.csproj",
+  "expectedPackageFiles": [
+    "C:\\Users\\1645286\\.nuget\\packages\\microsoft.netcore.app.host.win-x64\\3.1.31\\microsoft.netcore.app.host.win-x64.3.1.31.nupkg.sha512"
+  ],
   "logs": []
 }

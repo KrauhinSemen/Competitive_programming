@@ -58,10 +58,51 @@ namespace LogParsing.LogParsers
         {
             var lines = File.ReadLines(file.FullName);
             var result = new List<string>();
+            var works = new List<string>();
+            var lockers = new List<object>();
+            for (var i = 0; i < 10; i++)
+            {
+                works.Add(null);
+                lockers.Add(new object());
+                var thread = new Thread((threadNumber) =>
+                {
+                    while (true)
+                    {
+                        lock (works[(int)threadNumber])
+                        {
+                            works[(int)threadNumber] = null;
+                            Monitor.Wait(lockers[(int)threadNumber]);
+                        }
+                        var result_line = tryGetIdFromLine(works[i]);
+                        if (result_line != null)
+                        {
+                            Monitor.Enter(result);
+                            result.Add(result_line);
+                            Monitor.Exit(result);
+                        }
+                    }
+                });
+                thread.Start(i);
+            }
             foreach (var line in lines)
             {
-                var thread = new Thread(() => Adder.Add(tryGetIdFromLine, result, line));
-                thread.Start();
+                while (true)
+                {
+                    var wasRequest = false;
+                    for (var i = 0; i < works.Count; i++)
+                    {
+                        if (works[i] != null)
+                            continue;
+                        wasRequest = true;
+                        works[i] = line;
+                        lock (lockers[i])
+                        {
+                            Monitor.Pulse(lockers[i]);
+                        }
+                        break;
+                    }
+                    if (wasRequest) break;
+                }
             }
             return result.ToArray();
         }
