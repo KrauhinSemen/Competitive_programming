@@ -54,7 +54,7 @@ namespace LogParsing.LogParsers
             this.tryGetIdFromLine = tryGetIdFromLine;
         }
 
-        public string[] GetRequestedIdsFromLogFile()
+         public string[] GetRequestedIdsFromLogFile()
         {
             var lines = File.ReadLines(file.FullName);
             var result = new List<string>();
@@ -68,12 +68,12 @@ namespace LogParsing.LogParsers
                 {
                     while (true)
                     {
-                        lock (works[(int)threadNumber])
+                        lock (lockers[(int)threadNumber])
                         {
                             works[(int)threadNumber] = null;
                             Monitor.Wait(lockers[(int)threadNumber]);
                         }
-                        var result_line = tryGetIdFromLine(works[i]);
+                        var result_line = tryGetIdFromLine(works[(int)threadNumber]);
                         if (result_line != null)
                         {
                             Monitor.Enter(result);
@@ -104,6 +104,7 @@ namespace LogParsing.LogParsers
                     if (wasRequest) break;
                 }
             }
+            
             return result.ToArray();
         }
     }
